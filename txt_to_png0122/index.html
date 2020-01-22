@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	<title>文字生成图片小工具</title>
+</head>
+<body>
+	<form>
+		content1: <input id="content1" type="text" name="content1"><br>
+		content2: <input id="content2" type="text" name="content2"><br>
+		<input type="button" id="button" value="Submit" onClick="makeImg()"><br>
+		图片生成地址：<input type="text" id="imgUrl" readonly>
+		<input type="button" id="copy" value="点击复制" onClick="copyUrl()"><br>
+	</form>
+	<img id="maked_Img" src="http://img4.imgtn.bdimg.com/it/u=2853553659,1775735885&fm=26&gp=0.jpg">
+<script>
+	function makeImg()  
+	{  
+	    var maked_Img = document.getElementById("maked_Img");
+	    var content1 = document.getElementById("content1").value;
+	    var content2 = document.getElementById("content2").value;
+	    var imgUrl = document.getElementById("imgUrl")
+	    var info = "content1=" + content1 + "&content2=" +content2;
+	    // 创建Ajax对象
+        //判断用户的浏览器类型，决定使用何种方式ajax对象
+        if (typeof ActiveXObject != "undefined") {
+            var version = [
+                'Msxml2.XMLHTTP.6.0',
+                'Msxml2.XMLHTTP.5.0',
+                'Msxml2.XMLHTTP.3.0',
+                'Msxml2.XMLHTTP',
+                'Microsoft.XMLHTTP'
+            ];
+            for (var i = 0; i <= version.length; i++) {
+                try {
+                    var obj = new ActiveXObject(version[i]);
+                    if (typeof obj != "undefined") {
+                        break;
+                    }
+                } catch(ex) {
+ 
+                }
+            }
+        } else {
+            var obj = new XMLHttpRequest();
+        }
+        // 创建一个http请求，并设置“请求地址”及异步请求方式
+        obj.open("post", "./handle.php");
+        // 设置HTTP头协议信息
+        obj.setRequestHeader("content-type", "application/x-www-form-urlencoded");
+        // 发送请求
+        obj.send(info);
+        // 感知Ajax状态，当Ajax状态改变时会触发事件onreadystatechange
+        obj.onreadystatechange = function(){
+            // 当前状态为4时，数据接收完毕
+            if (obj.readyState == 4 && obj.status == 200) {
+                // 输出响应信息
+                maked_Img.src= obj.responseText;
+                imgUrl.value=obj.responseText;
+            }
+        }
+	} 
+	function copyUrl() {
+		var imgUrl=document.getElementById("imgUrl");
+		imgUrl.select(); // 选择对象
+		document.execCommand("Copy"); // 执行浏览器复制命令
+		alert("已复制好，可贴粘。");
+	}
+    </script>
+</body>
+</html>
